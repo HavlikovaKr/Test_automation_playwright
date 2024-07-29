@@ -87,3 +87,44 @@ def test_vyhledani_zbozi_vlozeni_do_kosiku(page):
 
     expected_text = "Přidáno do košíku"
     assert added_to_cart_locator.inner_text() == expected_text
+
+def test_pridano_do_oblibenych(page):
+    """Testování přidání produktu do oblíbených položek"""
+
+    # vyhledání webové stránky
+    TESTED_PRODUCT = "BrainMax Pure Matcha Ceremonial Japan BIO 50g"
+    page.goto("https://www.brainmarket.cz")
+    # čekání na vyskočení slevového okna
+    discount = page.get_by_text("×").click()
+    accept_button = page.get_by_test_id("buttonCookiesAccept").click()
+
+    # nalezení search inputu a vyhledání slova "Matcha"
+    search_input = page.get_by_test_id("searchInput")
+    search_input.fill("Matcha")
+
+    # kliknutí na tlačítko vyhledat a čekání nalezení stránky
+    search_button = page.get_by_test_id("searchBtn").click()
+
+    page.wait_for_load_state("networkidle")
+
+    # kliknutí na položku, která odpovídá hledanému slovu
+    product_locator= page.locator(
+        'span[data-micro="name"]',
+        has_text=TESTED_PRODUCT,)
+    product_locator.wait_for(state='visible', timeout=5000)
+    product_locator.click()
+
+    page.wait_for_load_state("networkidle")
+
+    # kliknutí na tlačítko "Přidat do oblíbených"
+    fav_detail = page.locator("#dkLabFavDetailSpan")
+    fav_detail.click()
+
+    # nalezení stránky "Oblíbené"
+    link_favorite = page.get_by_role("link", name="").click()
+    page.wait_for_load_state("networkidle")
+
+    # ověření, že se produkt nachází v oblíbených
+    element = page.locator(f'[title*="{TESTED_PRODUCT}"]')
+
+    assert element.is_visible(), "BrainMax Pure Matcha Ceremonial Japan BIO 50g"
