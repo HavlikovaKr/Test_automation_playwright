@@ -1,4 +1,4 @@
-# Engeto Testing Project 2
+# Test_automation_playwright
 Tento projekt se zaměřuje na automatizované testování webové stránky pomocí frameworku Playwright.
 
 ## Dependencies
